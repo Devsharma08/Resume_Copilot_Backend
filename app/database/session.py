@@ -14,4 +14,4 @@ sessionLocal = sessionmaker(
     autoflush=False,
 )
 
-db = sessionmaker()
+db = sessionLocal()
