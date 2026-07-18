@@ -37,3 +37,8 @@ class ResumeAnalyticsUpdate(ResumeAnalyticsBase):
     feedback:dict[str,Any] | None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ResumeAnalyticsDelete():
+    status:bool
+    message:str

@@ -6,8 +6,9 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.models.user import User
-    from app.models.resumeVersion import ResumeVersion
+    from app.models.resume_version import ResumeVersion
     from app.models.job import Job
+
 
 class Application(Base):
     __tablename__ = "applications"

@@ -3,8 +3,6 @@ from datetime import datetime
 from pydantic import BaseModel,ConfigDict,Field
 
 
-
-
 class ResumeVersionBase(BaseModel):
     resume_id:int
     user_id:int

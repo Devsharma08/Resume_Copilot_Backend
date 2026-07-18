@@ -8,9 +8,10 @@ from app.database.base import Base
 
 if TYPE_CHECKING:
     from app.models.resume import Resume
-    from app.models.resumeAnalysis import ResumeAnalysis
-    from app.models.compatibilityReport import CompatibilityReport
-    from app.models.coverLetter import CoverLetter
+    from app.models.resume_analysis import ResumeAnalysis
+    from app.models.compatibility_report import CompatibilityReport
+    from app.models.cover_letter import CoverLetter
+
 
 class ResumeVersion(Base):
     __tablename__ = "resume_versions"   
