@@ -1,37 +1,30 @@
-from pydantic import BaseModel,ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
-from typing import Any
-
 
 class CompatibilityReportBase(BaseModel):
-    resume_version_id:int
-    job_id:int
+    resume_version_id: int
+    job_id: int
 
 class CompatibilityReportCreate(CompatibilityReportBase):
-    resume_version_id:int
-    job_id:int
-    match_score:int
-    missing_skills:list[str]
-    similarity_score:int
-    feedback:dict[str,Any] | None
+    compatibility_score: int
+    matched_skills: dict | list | None = None
+    missing_skills: dict | list | None = None
+    keyword_matches: dict | list | None = None
+    recommendations: dict | list | None = None
 
 class CompatibilityReportResponse(CompatibilityReportBase):
-    id:int
-    resume_version_id:int
-    job_id:int
-    match_score:int
-    missing_skills:list[str]
-    similarity_score:int
-    feedback:dict[str,Any] | None
-    created_at:datetime
-    model_config=ConfigDict(from_attributes=True)
+    id: int
+    compatibility_score: int
+    matched_skills: dict | list | None = None
+    missing_skills: dict | list | None = None
+    keyword_matches: dict | list | None = None
+    recommendations: dict | list | None = None
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
 
-class CompatibilityReportUpdate(CompatibilityReportBase):
-    match_score:int | None
-    missing_skills:list[str] | None
-    similarity_score:int | None
-    feedback:dict[str,Any] | None
-
-class CompatibilityReportDelete(BaseModel):
-    status:bool
-    message:str
+class CompatibilityReportUpdate(BaseModel):
+    compatibility_score: int | None = None
+    matched_skills: dict | list | None = None
+    missing_skills: dict | list | None = None
+    keyword_matches: dict | list | None = None
+    recommendations: dict | list | None = None

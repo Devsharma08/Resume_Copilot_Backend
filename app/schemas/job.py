@@ -1,55 +1,35 @@
-from pydantic import BaseModel,Field,ConfigDict
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
-from enum import Enum
-
-class JobStatus(str,Enum):
-    ACTIVE = "active"
-    ARCHIVED = "archived"
-    EXPIRED = "expired"
-
 
 class JobBase(BaseModel):
-    title:str = Field(...,max_length=255,description="Job title")
-    company_name:str = Field(...,max_length=255,description="Company name")
-    location:str | None = Field(None,max_length=255,description="Job location")
-    description:str = Field(...,description="Job description")
-    requirements:str = Field(...,description="Job requirements")
-    responsibilities:str = Field(...,description="Job responsibilities")
-    status:JobStatus = Field(default=JobStatus.ACTIVE,description="Job status")
-
+    title: str = Field(..., max_length=255, description="Job title")
+    company: str = Field(..., max_length=255, description="Company name")
+    location: str = Field(..., max_length=255, description="Job location")
+    employment_type: str = Field(..., description="Employment type (e.g. Full-Time, Internship)")
+    source: str = Field(..., description="Job source (e.g. Linkedin)")
+    url: str = Field(..., max_length=255, description="Job URL")
+    description: str = Field(..., description="Job description")
 
 class JobCreate(JobBase):
-    url:str | None = Field(None,max_length=255,description="Job URL")
-    source:str | None = Field(None,max_length=255,description="Job source")
+    application_status: str = Field(default="Not Started", description="Application status")
+    parsed_requirements: dict | list | None = Field(default=None, description="Parsed requirements JSONB")
 
-class JobDelete(BaseModel):
-    status:bool
-    message:str
+class JobResponse(JobBase):
+    id: int
+    application_status: str
+    parsed_requirements: dict | list | None = None
+    created_at: datetime
+    updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
 
 class JobUpdate(BaseModel):
-    title:str | None = Field(None,max_length=255,description="Job title")
-    company_name:str | None = Field(None,max_length=255,description="Company name")
-    location:str | None = Field(None,max_length=255,description="Job location")
-    description:str | None = Field(None,description="Job description")
-    requirements:str | None = Field(None,description="Job requirements")
-    responsibilities:str | None = Field(None,description="Job responsibilities")
-    status:JobStatus | None = Field(None,description="Job status")
-    url:str | None = Field(None,max_length=255,description="Job URL")
-
-
-class JobResponse(BaseModel):
-    id:int
-    title:str
-    company_name:str
-    location:str | None
-    description:str
-    requirements:str
-    responsibilities:str
-    status:JobStatus
-    created_at:datetime
-    updated_at:datetime
-    url:str | None
-
-    model_config = ConfigDict(from_attributes=True)
+    title: str | None = None
+    company: str | None = None
+    location: str | None = None
+    employment_type: str | None = None
+    source: str | None = None
+    url: str | None = None
+    description: str | None = None
+    application_status: str | None = None
+    parsed_requirements: dict | list | None = None
