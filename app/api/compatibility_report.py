@@ -4,6 +4,8 @@ from app.database.session import sessionLocal
 from app.schemas.compatibility_report import CompatibilityReportCreate, CompatibilityReportResponse, CompatibilityReportUpdate
 from app.repositories.compatibility_report import CompatibilityReportRepository
 
+
+
 router = APIRouter(prefix="/compatibilityreports", tags=["CompatibilityReports"])
 
 def get_db():
@@ -62,3 +64,4 @@ def delete_compatibility_report(report_id: int, db: Session = Depends(get_db)):
         )
     repo.delete_report(report_id)
     return None
+
