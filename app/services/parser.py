@@ -33,6 +33,7 @@ class FileParserService:
             text.append(para.text)
         return "\n\n".join(text)
 
+
     @classmethod
     def extract_text(cls,filename:str,file_bytes:bytes)->str:
         """

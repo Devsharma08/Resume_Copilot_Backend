@@ -12,7 +12,7 @@ class OllamaProvider:
         user_prompt:str,
         json_format:bool = False
     )->str:
-       """
+        """
         Sends a system instruction and user prompt to local Ollama.
         
         Parameters:
@@ -39,7 +39,6 @@ class OllamaProvider:
             try:
                 response = await client.post(OLLAMA_URL,json=payload)
                 response.raise_for_status() # raises HTTPError for bad responses (4xx or 5xx)
-                
                 # --- NEW: STRICT JSON FIX ---
                 result = response.json()
 
