@@ -22,7 +22,6 @@ def get_db():
 @router.post("/upload/{resume_id}", response_model=ResumeVersionResponse, status_code=status.HTTP_201_CREATED)
 async def upload_resume_version(
     resume_id: int,
-    user_id: int = Form(...),
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
@@ -30,22 +29,28 @@ async def upload_resume_version(
     Uploads a resume file (PDF/DOCX), extracts text, parses it using local Ollama,
     creates a ResumeVersion, and automatically generates its ResumeAnalysis reports.
     """
-    # Read file bytes
+       # Read file bytes
     file_bytes = await file.read()
     
-    # Extract plain text
+    # Extract plain text (with error fallback)
     try:
+        print(f"File: {file.filename} and file_bytes: {file_bytes}")
         raw_text = FileParserService.extract_text(file.filename, file_bytes)
-    except ValueError as e:
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            detail=f"Failed to parse file: {str(e)}"
         )
 
     # Call AI Service to parse raw text into structured JSON profile
     try:
+        print(f"Raw text: {raw_text}")
         parsed_json = await AIService.parse_resume_text(raw_text)
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"AI extraction failed: {str(e)}"
@@ -54,14 +59,20 @@ async def upload_resume_version(
     # Save ResumeVersion in the database
     repo_version = ResumeVersionRepository(db)
     existing_versions = repo_version.get_all_versions(resume_id)
-    next_version_number = len(existing_versions) + 1
+    print(f"resume versions: {existing_versions}"); next_version_number = len(existing_versions) + 1
 
-    # Form storage key (using a simple mock structure)
-    storage_key = f"resumes/{user_id}/{resume_id}/v{next_version_number}_{file.filename}"
+    # Form storage key
+    storage_key = f"resumes/{resume_id}/v{next_version_number}_{file.filename}"
 
+    print(f"Resume_id: {resume_id}")
+    print(f"Status: draft")
+    print(f"Version number: {next_version_number}")
+    print(f"Storage key: {storage_key}")
+    print(f"Original filename: {file.filename}")
+    print(f"Raw text: {raw_text}")
+    print(f"Parsed resume: {parsed_json}")
     version_in = ResumeVersionCreate(
         resume_id=resume_id,
-        user_id=user_id,
         status="draft",
         version_number=next_version_number,
         storage_key=storage_key,
@@ -72,9 +83,14 @@ async def upload_resume_version(
     
     db_version = repo_version.create_version(resume_id=resume_id, version_in=version_in)
 
+    print(f"db version : {db_version}")
+
     # Automatically trigger Resume Analysis (ATS scoring)
     try:
+        print(f"type of parsed json: {type(parsed_json)}")
         analysis_json = await AIService.analyze_parsed_resume(parsed_json)
+
+        print(f"resume report : {analysis_json}")
         
         analysis_in = ResumeAnalysisCreate(
             resume_version_id=db_version.id,

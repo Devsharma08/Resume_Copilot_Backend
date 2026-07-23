@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.database import models
+from fastapi.middleware.cors import CORSMiddleware
 
 # Import all routers
 from app.api.user import router as user_router
@@ -11,7 +12,15 @@ from app.api.compatibility_report import router as compatibility_report_router
 from app.api.cover_letter import router as cover_letter_router
 from app.api.application import router as application_router
 
-app = FastAPI(title="career copilotAPI")
+app = FastAPI(title="Career Copilot API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Register routers
 app.include_router(user_router)

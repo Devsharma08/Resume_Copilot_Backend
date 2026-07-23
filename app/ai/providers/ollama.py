@@ -35,7 +35,7 @@ class OllamaProvider:
         if json_format:
             payload["format"] = "json"
 
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=None) as client:
             try:
                 response = await client.post(OLLAMA_URL,json=payload)
                 response.raise_for_status() # raises HTTPError for bad responses (4xx or 5xx)
